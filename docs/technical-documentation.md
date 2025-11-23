@@ -1,105 +1,59 @@
-# 🧩 Technical Documentation – Assignment 2
+# Technical Documentation - Assignment 3
 
-## 📘 Project Overview
-This document explains the **technical details, structure, and performance decisions** behind my personal portfolio web application for **Assignment 2**.  
-The project demonstrates my ability to create a modern, responsive, and interactive website using **HTML**, **CSS**, and **JavaScript**, while also integrating **AI-assisted improvements** and optimization techniques.
+## Overview
+This is my Assignment 3 portfolio. I added API data, more interaction logic, saved state, and performance tweaks while keeping the UI accessible and easy to set up for a student project.
 
----
-
-## 🗂️ File Structure
+## File Map
 ```
-assignment-2/
-├── README.md
-├── index.html
-├── css/
-│   └── styles.css
-├── js/
-│   └── script.js
-├── assets/
-│   └── images/
-├── docs/
-│   ├── ai-usage-report.md
-│   └── technical-documentation.md
-└── .gitignore
+index.html              Main layout and sections (About, Projects, GitHub API widget, Contact)
+css/styles.css          Theming, layout, components, animations, and utilities
+js/script.js            Interactivity, state management, API calls, validation, and UI logic
+docs/ai-usage-report.md AI usage notes
+docs/technical-documentation.md This file
 ```
----
 
-## ⚙️ Functional Breakdown
+## Key Functionality
+### Theme & Personalization
+- Dark/light mode saved in `localStorage`.
+- Time-based greeting plus stored username; visit counter and session timer so the page feels stateful.
 
-### 1️⃣ index.html
-**Purpose:**  
-Defines the layout and structure of the portfolio. It is organized into three main sections: **About**, **Projects**, and **Contact**.  
-Each section includes elements for interactivity, accessibility, and animation.
+### Projects Module
+- Filters by category and skill level, live search, and sorting (date asc/desc, title).
+- Preferences saved as `projectFilter`, `projectLevel`, and `projectSort` in `localStorage`.
+- Shows a stats line for what is currently visible; cards expand/collapse with `aria-expanded`.
 
-**Main Components:**
-- **Header / Navigation:**  
-  Responsive navigation bar with a **dark/light theme toggle**.  
-  The selected theme is saved in `localStorage`.
+### GitHub REST API Integration
+- Fetches recent repos: `https://api.github.com/users/{user}/repos?per_page=5&sort=updated`.
+- Handles loading, 6s timeout, empty results, and HTTP errors with friendly status text.
+- Renders cards with repo name/link, stars, language, and last updated date; `githubUser` is persisted.
 
-- **About Section:**  
-  Includes a **personalized greeting** that updates based on the user’s name and time of day.  
-  Contains an **API widget** that loads a random quote with retry and loading states.
+### Quote API
+- Uses Quotable for random quotes with loading text, retry button, and error fallback.
 
-- **Projects Section:**  
-  Displays project cards with **filter buttons** and a **live search bar**.  
-  Each project card can **expand and collapse** to show details smoothly.
+### Contact & Auth Simulation
+- Validation: required fields, email regex, minimum message length, inline errors, and animated status.
+- Simulated auth toggle stored in `localStorage`; when signed out the form is disabled to show gated UI state.
 
-- **Contact Section:**  
-  Includes a form that validates inputs, shows **inline error messages**, and displays **animated success/error feedback**.
+## State Management
+- Stored keys: `theme`, `username`, `visits`, `projectFilter`, `projectLevel`, `projectSort`, `auth`, `githubUser`.
+- Session-only: `sessionStart` drives the timer.
+- UI uses these values for theming, greeting, filters, sort, auth gating, and the GitHub username field.
 
-- **Footer:**  
-  Auto-updates the current year using JavaScript.
+## Performance Notes
+- `loading="lazy"` on images; deduped CSS; limited DOM writes by batching filter/sort updates.
+- Short fetch timeouts to avoid stuck loaders; no external libraries.
+- Kept assets minimal (SVG placeholders and small PNGs); avoided unused files.
 
----
+## Accessibility
+- Semantic sections and headings.
+- `aria-live` for status text; `aria-expanded` on toggles; focusable controls with clear hover/focus states.
+- Input errors are shown inline; statuses announce changes for screen readers.
 
-### 2️⃣ css/styles.css
-**Purpose:**  
-Handles all styling, transitions, and animations. The CSS file was carefully organized for readability and performance.
-
-**Key Features:**
-- Uses **Flexbox** and **CSS Grid** for responsive layout.
-- Defines **custom properties** (CSS variables) for theme colors and consistency.
-- Includes `.reveal` and `.in-view` classes for smooth fade-in animations using `IntersectionObserver`.
-- Adds hover effects on buttons and project cards.
-- Provides animated feedback for form submission (success or error states).
-- Ensures accessibility through proper contrast and focus outlines.
-
----
-
-### 3️⃣ js/script.js
-**Purpose:**  
-Implements all interactivity and data handling logic.
-
-**Main Functionalities:**
-- **Greeting + LocalStorage:**  
-  Saves the user’s name and theme preference.  
-  Displays a time-based message (Good Morning / Afternoon / Evening).
-
-- **Theme Toggle:**  
-  Switches between dark and light themes with smooth transitions.
-
-- **Reveal on Scroll:**  
-  Uses `IntersectionObserver` to animate elements when they enter the viewport.
-
-- **Project Search and Filter:**  
-  Filters project cards based on category (Web/UI-UX) or search keywords.  
-  Shows an **empty state message** when no projects match.
-
-- **Quote API Integration:**  
-  Fetches a random quote from the **Quotable API**.  
-  Displays loading text while fetching and a retry button if the request fails.
-
-- **Form Validation:**  
-  Checks for empty fields or invalid email formats.  
-  Displays **inline error messages**, and **animated success feedback** using `.success` / `.error` classes.
-
-**Sample Snippet:**
-```javascript
-fetch('https://api.quotable.io/random')
-  .then(res => res.json())
-  .then(data => {
-      quote.textContent = `"${data.content}" — ${data.author}`;
-  })
-  .catch(() => {
-      status.textContent = "Failed to load quote. Please try again.";
-  });
+## Testing / Validation Tips
+- Use DevTools network throttling/offline to see API fallbacks.
+- Test GitHub widget with valid/invalid usernames to see empty/error states.
+- Toggle filters/sorts and refresh to confirm saved preferences.
+- Try contact form while signed out (blocked) vs. signed in (validates and succeeds).
+- Check mobile viewport (<=640px) to confirm layout remains usable; header nav collapses by design.
+## Reflection
+- Through this assignment, I learned how to use APIs with JavaScript, manage browser state, and debug errors more effectively.
